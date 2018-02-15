@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
-	"os"
 
 	"gopkg.in/yaml.v2"
 )
@@ -38,8 +36,7 @@ func LoadYml(ymlPath string) (*CommandSpec, error) {
 	cs := CommandSpec{}
 	err = yaml.Unmarshal(data, &cs)
 	if err != nil {
-		log.Fatalf("error: %v", err)
-		os.Exit(2)
+		return nil, fmt.Errorf("Yaml parse failed %q", err)
 	}
 
 	return &cs, nil
