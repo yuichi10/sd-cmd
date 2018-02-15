@@ -2,6 +2,7 @@ package util
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -9,12 +10,12 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func loadFile(filePath string) []byte {
+func loadFile(filePath string) ([]byte, error) {
 	dat, err := ioutil.ReadFile(filePath)
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("Fail to read file:%q", err)
 	}
-	return dat
+	return dat, nil
 }
 
 type commandSpec struct {
@@ -28,17 +29,20 @@ type commandSpec struct {
 	}
 }
 
-func LoadYml(ymlPath string) CommandSpec {
-	data := loadFile(ymlPath)
+func LoadYml(ymlPath string) (*CommandSpec, error) {
+	data, err := loadFile(ymlPath)
+	if err != nil {
+		return nil, fmt.Errorf("Fail to load yaml:%q", err)
+	}
 
 	cs := CommandSpec{}
-	err := yaml.Unmarshal(data, &cs)
+	err = yaml.Unmarshal(data, &cs)
 	if err != nil {
 		log.Fatalf("error: %v", err)
 		os.Exit(2)
 	}
 
-	return cs
+	return &cs, nil
 }
 
 func CommandSpecToJsonBytes(cs CommandSpec) []byte {

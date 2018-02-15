@@ -29,7 +29,10 @@ func New(inputCommand []string) (*Publisher, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Command parse fail:%q", err)
 	}
-	cs := util.LoadYml(p.inputCommand["ymlPath"])
-	p.commandSpec = util.CommandSpecToJsonBytes(cs)
+	cs, err := util.LoadYml(p.inputCommand["ymlPath"])
+	if err != nil {
+		return nil, fmt.Errorf("Yaml load failed:%q", err)
+	}
+	p.commandSpec = util.CommandSpecToJsonBytes(*cs)
 	return &p, nil
 }
